@@ -29,17 +29,49 @@ router.get('/', (req, res) => {
     });
 })
 
-// Find loan before delete
-router.use('/delete', (req, res, next) => {
-    let query = 'SELECT * FROM loans WHERE member_id = ? AND book_id = ?'
-    let formated = mysql.format(query, [req.body.member, req.body.book])
+
+router.use('/loan', (req, res, next) => {
+    let query = 'SELECT * FROM loans WHERE book_id = ?'
+    let formated = mysql.format(query, [req.body.book])
 
     pool.query(formated, (err, rows) => {
         if (err)
             res.status(500).send(err.sqlMessage);
         else
+            if (rows.length !== 0) {
+                res.status(404).send('Book not available, already on loan!')
+            } else {
+                next()
+            }
+    });
+})
+
+// Loan a book
+router.post('/loan', (req, res) => {
+    let query = 'INSERT INTO loans (member_id, book_id, loan_date, due_date) values (?, ?, ?, ?)';
+    let formated = mysql.format(query, [req.user.id, req.body.book, dateConverter, dateConverter]);
+
+    pool.query(formated, (err, rows) => {
+        if (err) {
+            res.status(500).send(err.sqlMessage);
+        } else
+            res.send(rows);
+    });
+})
+
+
+// Find loan before delete
+router.use('/delete', (req, res, next) => {
+    let query = 'SELECT * FROM loans WHERE member_id = ? AND book_id = ?'
+    let formated = mysql.format(query, [req.user.id, req.body.book])
+
+    pool.query(formated, (err, rows) => {
+        if (err) {
+            res.status(500).send(err.sqlMessage);
+        } else {
             req.body.loanToDelete = rows[0]
             next()
+        }
     });
 })
 
@@ -50,22 +82,23 @@ router.use('/delete', (req, res, next) => {
     let formated = mysql.format(query, [loan.book_id, loan.member_id, loan.loan_date, dateConverter])
 
     pool.query(formated, (err, rows) => {
-        if (err)
+        if (err) {
             res.status(500).send(err.sqlMessage);
-        else
+        } else
             next()
     });
 })
 
 router.delete('/delete', (req, res) => {
+    let loan = req.body.loanToDelete
     query = 'DELETE FROM loans WHERE member_id = ? AND book_id = ?';
-    formated = mysql.format(query, [req.body.member, req.body.book])
+    formated = mysql.format(query, [loan.member_id, loan.book_id])
 
     pool.query(formated, (err, rows) => {
         if (err)
             res.status(500).send(err.sqlMessage);
         else
-            res.status(200).send('Row deleted: ' + rows[0])
+            res.status(200).send(JSON.stringify(loan.book_id))
     });
 })
 

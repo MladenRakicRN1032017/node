@@ -3,7 +3,7 @@ const jwt = require("jsonwebtoken");
 
 const verifyToken = (req, res, next) => {
     const bearerHeader = req.headers['authorization']
-    let token = null
+    let token = null    
 
     if (bearerHeader) {
         const header = bearerHeader.split(" ")

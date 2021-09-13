@@ -31,6 +31,8 @@ router.get('/', (req, res) => {
     });
 });
 
+
+// Search by category
 router.get('/category/:cat', (req, res) => {
     let query = 'SELECT * FROM books WHERE category = ?';
     let formated = mysql.format(query, [req.params.cat]);
@@ -45,17 +47,19 @@ router.get('/category/:cat', (req, res) => {
 
 
 
-
 // Search by title
 router.get('/search/:title', (req, res) => {
     let query = 'SELECT * FROM books WHERE title like ?';
     let formated = mysql.format(query, [req.params.title + '%']);
 
     pool.query(formated, (err, rows) => {
-        if (err)
+        if (err) {
+            console.log('jok')
             res.status(500).send(err.sqlMessage);
-        else
+        } else {
+            console.log('success')
             res.send(rows);
+        }
     }); 
 })
 
