@@ -7,8 +7,8 @@
         :fields="fields"
         :tbody-tr-class="rowClass"
         head-variant="light">
-      <template v-slot:cell(loan)="row">
-        <b-button variant="primary" @click="loanBook(row.item.id)">Loan</b-button>
+      <template v-slot:cell(reserve)="row">
+        <b-button variant="primary" @click="reserveBook(row.item.id)">Rezervisi</b-button>
       </template>
     </b-table>
     <h1 v-else>No books</h1>
@@ -20,7 +20,7 @@ import {mapState, mapActions} from 'vuex'
 export default {
   name: "BookList",
   computed: {
-    ...mapState(['books', 'user'])
+    ...mapState(['books', 'member', 'loggedIn'])
   },
   data() {
     return {
@@ -29,14 +29,18 @@ export default {
         {key: 'author'},
         {key: 'publish_year'},
         {key: 'category'},
-        {key: 'loan'}
+        {key: 'reserve'}
       ]
     }
   },
   methods: {
-    ...mapActions(['loan']),
-    loanBook(id) {
-      this.loan(id)
+    ...mapActions(['reserve']),
+    reserveBook(id) {
+      if (this.loggedIn) {
+        this.reserve(id)
+      } else {
+        alert("Morate biti ulogovani!")
+      }
     },
     rowClass(item, type) {
       if (!item || type !== 'row') return

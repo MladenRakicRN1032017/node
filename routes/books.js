@@ -54,10 +54,8 @@ router.get('/search/:title', (req, res) => {
 
     pool.query(formated, (err, rows) => {
         if (err) {
-            console.log('jok')
             res.status(500).send(err.sqlMessage);
         } else {
-            console.log('success')
             res.send(rows);
         }
     }); 
@@ -90,33 +88,6 @@ router.get('/:id', (req, res) => {
 })
 
 
-router.post('/', (req, res) => {
-    let { error } = schema.validate(req.body)
-
-    if (error) {
-        res.status(400).send(error.details[0].message)
-    } else {
-
-        let query = "INSERT INTO books (title, author, isbn, publish_year, category) values (?, ?, ?, ?, ?)";
-        let formated = mysql.format(query, [req.body.title, req.body.author, req.body.isbn, req.body.publish_year, req.body.category]);
-
-        pool.query(formated, (err, response) => {
-            if (err)
-                res.status(500).send(err.sqlMessage);
-            else {
-                query = 'SELECT * FROM books where id=?';
-                formated = mysql.format(query, [response.insertId]);
-
-                pool.query(formated, (err, rows) => {
-                    if (err)
-                        res.status(500).send(err.sqlMessage);
-                    else
-                        res.send(rows[0]);
-                });
-            }
-        });
-    }
-})
 
 
 

@@ -24,7 +24,7 @@
             </li>
           </ul>
           <b-button v-if="!this.loggedIn" variant="outline-success" @click="redirectToLogin()">Log in</b-button>
-          <b-button v-if="this.loggedIn" variant="outline-success" @click="redirectToProfile()">{{user.name}}</b-button>
+          <b-button v-if="this.loggedIn" variant="outline-success" @click="redirectToProfile()">{{member.email}}</b-button>
         </div>
       </div>
     </nav>
@@ -36,7 +36,7 @@ import { mapActions, mapState } from 'vuex'
 export default {
   name: "Navbar",
   computed: {
-    ...mapState(['loggedIn', 'user'])
+    ...mapState(['loggedIn', 'member'])
   },
   data() {
     return {

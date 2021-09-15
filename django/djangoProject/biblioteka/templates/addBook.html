@@ -1,0 +1,91 @@
+{% extends 'master.html' %}
+
+
+{% block content %}
+
+    <div class="row justify-content-center text-left">
+        <div class="col-6">
+            <form method="post" action="{% url 'add_book' %}">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="{{ form.title.id_for_label }}">{{ form.title.label_tag }}</label>
+                    <input type="text" class="form-control" id="{{ form.title.id_for_label }}" name="{{ form.title.name }}">
+                    {% if form.title.errors %}
+                        <div class="alert alert-danger">
+                            <ul style="text-align: left">
+                                {% for error in form.title.errors %}
+                                    <li>{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.author.id_for_label }}">{{ form.author.label_tag }}</label>
+                    <input type="text" class="form-control" id="{{ form.author.id_for_label }}" name="{{ form.author.name }}">
+                    {% if form.author.errors %}
+                        <div class="alert alert-danger">
+                            <ul style="text-align: left">
+                                {% for error in form.author.errors %}
+                                    <li>{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.publish_year.id_for_label }}">{{ form.publish_year.label_tag }}</label>
+                    <input type="text" class="form-control" id="{{ form.publish_year.id_for_label }}" name="{{ form.publish_year.name }}">
+                    {% if form.publish_year.errors %}
+                        <div class="alert alert-danger">
+                            <ul style="text-align: left">
+                                {% for error in form.publish_year.errors %}
+                                    <li>{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.category.id_for_label }}">{{ form.category.label_tag }}</label>
+                    <input type="text" class="form-control" id="{{ form.category.id_for_label }}" name="{{ form.category.name }}">
+                    {% if form.category.errors %}
+                        <div class="alert alert-danger">
+                            <ul style="text-align: left">
+                                {% for error in form.category.errors %}
+                                    <li>{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.br_komada.id_for_label }}">{{ form.br_komada.label_tag }}</label>
+                    <input type="text" class="form-control" id="{{ form.br_komada.id_for_label }}" name="{{ form.br_komada.name }}">
+                    {% if form.br_komada.errors %}
+                        <div class="alert alert-danger">
+                            <ul style="text-align: left">
+                                {% for error in form.br_komada.errors %}
+                                    <li>{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <input type="submit" class="btn btn-primary btn-lg" value="Dodaj"/>
+            </form> 
+        </div>
+    </div>
+        
+    
+
+
+
+
+
+{% endblock content %}

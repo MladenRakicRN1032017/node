@@ -1,0 +1,46 @@
+{% extends 'master.html' %}
+
+{% block content %}
+
+    <h1>Members</h1>
+    <div class="row mt-5" style="text-align: left">
+        <div class="col">
+            <button type="button" class="btn btn-primary">Dodaj</button>
+        </div>
+    </div>
+    <table class="table table-hover table-primary mt-2">
+    <thead>
+        <tr>
+        <th scope="col">Email</th>
+        <th scope="col">Status</th>
+        <th scope="col">Membership Until</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for member in members %}
+        
+            <tr>
+                <th scope="row"><a href="{% url 'member' member.id %}">{{member.email}}</a></th>
+                {% if member.active %}
+                    <td>
+                        <form action="{% url 'member' member.id %}" method="post">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-success">Active</button>
+                        </form>
+                    </td>
+                {% else %}
+                    <td>
+                        <form action="{% url 'member' member.id %}" method="post">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger">Not Activated</button>
+                        </form>
+                    </td>
+                {% endif %}
+                <td>{{member.membership_until}}</td>
+            </tr>
+        
+        {% endfor %}
+    </tbody>
+    </table>
+
+{% endblock content %}

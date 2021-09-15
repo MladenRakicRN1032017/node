@@ -5,11 +5,12 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    user: null,
+    member: null,
     loggedIn: false,
     books: [],
     loans: [],
-    loansHistory: []
+    loansHistory: [],
+    reservations: []
   },
 
   mutations: {
@@ -21,18 +22,26 @@ export default new Vuex.Store({
       state.loans = loans
     },
 
-    log_out: function (state) {
-      state.user = null
-      state.loggedIn = false
+    set_reservations: function (state, reservations) {
+      state.reservations = reservations
     },
 
-    set_user: function (state, user) {
-      state.user = user
+    set_history: function (state, history) {
+      state.loansHistory = history
+    },
+
+    set_member: function (state, member) {
+      state.member = member
       state.loggedIn = true
     },
 
-    add_loan: function (state, book) {
-      state.loans.push(book)
+    log_out: function (state) {
+      state.member = null
+      state.loggedIn = false
+    },
+
+    add_reservation: function (state, reservation) {
+      state.reservations.push(reservation)
     },
 
     return_book: function (state, book) {
@@ -70,9 +79,33 @@ export default new Vuex.Store({
 
   actions: {
     load_books: function ({ commit }) {
-      fetch('http://localhost:8000/books', {method: 'get'}).then((response) => {
+      fetch('http://localhost:8000/books').then((response) => {
         return response.json()
       }).then(data => {
+        commit('set_books', data)
+      }).catch(err => {
+        alert(err)
+      })
+    },
+
+    load_by_category: function ({commit}, category) {
+      fetch(`http://localhost:8000/books/category/${category}`).then((response) => {
+        return response.json()
+      }).then(data => {
+        commit('set_books', data)
+      }).catch(err => {
+        alert(err)
+      })
+    },
+
+    search: function ({commit}, text) {
+      fetch(`http://localhost:8000/books/search/${text}`)
+        .then(response => {
+          if (!response.ok) {
+            throw response
+          }
+          return response.json()
+        }).then(data => {
         commit('set_books', data)
       }).catch(err => {
         alert(err)
@@ -96,25 +129,49 @@ export default new Vuex.Store({
       })
     },
 
-    load_by_category: function ({commit}, category) {
-      fetch(`http://localhost:8000/books/category/${category}`).then((response) => {
+    load_reservations: function ({commit}) {
+      const jwt = localStorage.getItem('jwt')
+      const bearer = `Bearer ${jwt}`
+      fetch('http://localhost:8000/reservations', {
+        method: 'get',
+        headers: {
+          'Authorization': bearer
+        }
+      }).then((response) => {
         return response.json()
       }).then(data => {
-        commit('set_books', data)
+        commit('set_reservations', data)
       }).catch(err => {
         alert(err)
       })
     },
 
-    login: function ({commit}, user) {
-      commit('set_user', user)
-    },
-
-    loan: function ({commit}, book) {
-      let body = {"book": book}
+    load_history: function ({commit}) {
       const jwt = localStorage.getItem('jwt')
       const bearer = `Bearer ${jwt}`
-      fetch('http://localhost:8000/loans/loan', {
+      fetch('http://localhost:8000/history', {
+        method: 'get',
+        headers: {
+          'Authorization': bearer
+        }
+      }).then((response) => {
+        return response.json()
+      }).then(data => {
+        commit('set_history', data)
+      }).catch(err => {
+        alert(err)
+      })
+    },
+
+    login: function ({commit}, member) {
+      commit('set_member', member)
+    },
+
+    reserve: function ({commit}, book) {
+      let body = {"book_id": book}
+      const jwt = localStorage.getItem('jwt')
+      const bearer = `Bearer ${jwt}`
+      fetch('http://localhost:8000/reservations/reserve', {
         method: 'post',
         headers: {
           'Authorization': bearer,
@@ -127,7 +184,8 @@ export default new Vuex.Store({
         }
         return response.json()
       }).then(data => {
-        commit('add_loan', data)
+        commit('add_reservation', data)
+        alert('Knjiga je uspesno rezervisana.')
       }).catch(err => {
         if (typeof err.text === 'function')
           err.text().then((errorMessage) => {
@@ -168,19 +226,7 @@ export default new Vuex.Store({
       })
     },
 
-    search: function ({commit}, text) {
-      fetch(`http://localhost:8000/books/search/${text}`)
-        .then(response => {
-          if (!response.ok) {
-            throw response
-          }
-          return response.json()
-        }).then(data => {
-          commit('set_books', data)
-      }).catch(err => {
-        alert(err)
-      })
-    }
+
 
   }
 })

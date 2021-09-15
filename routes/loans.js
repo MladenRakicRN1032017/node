@@ -18,8 +18,8 @@ router.use(express.json())
 router.use('/', verifyToken)
 
 router.get('/', (req, res) => {
-    let query = 'SELECT book_id, books.title, loan_date, due_date FROM loans JOIN books ON loans.book_id = books.id WHERE member_id = ?';
-    let formated = mysql.format(query, [req.user.id]);
+    let query = 'SELECT book_id, books.title, start_date, due_date FROM loans JOIN books ON loans.book_id = books.id WHERE member_id = ?';
+    let formated = mysql.format(query, [req.member.id]);
 
     pool.query(formated, (err, rows) => {
         if (err)
@@ -29,7 +29,7 @@ router.get('/', (req, res) => {
     });
 })
 
-
+/*
 router.use('/loan', (req, res, next) => {
     let query = 'SELECT * FROM loans WHERE book_id = ?'
     let formated = mysql.format(query, [req.body.book])
@@ -45,6 +45,7 @@ router.use('/loan', (req, res, next) => {
             }
     });
 })
+
 
 // Loan a book
 router.post('/loan', (req, res) => {
@@ -101,5 +102,5 @@ router.delete('/delete', (req, res) => {
             res.status(200).send(JSON.stringify(loan.book_id))
     });
 })
-
+*/
 module.exports = router

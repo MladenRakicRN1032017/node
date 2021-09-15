@@ -6,9 +6,10 @@ require("dotenv").config();
 // routes
 const books = require('./routes/books')
 const categories = require('./routes/categories')
-const users = require('./routes/users')
-const loansHistory = require('./routes/loansHistory')
+const members = require('./routes/members')
+const history = require('./routes/history')
 const loans = require('./routes/loans')
+const reservations = require('./routes/reservations')
 
 
 /*app.use(function(req, res, next) {
@@ -22,9 +23,11 @@ app.use(cors())
 
 app.use('/books', books)
 app.use('/categories', categories)
-app.use('/users', users)
-app.use('/history', loansHistory)
+app.use('/members', members)
+app.use('/reservations', reservations)
 app.use('/loans', loans)
+app.use('/history', history)
+
 
 
 app.get('/', (req, res) => {

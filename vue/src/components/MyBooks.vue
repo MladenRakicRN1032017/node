@@ -10,7 +10,7 @@
         <b-button variant="primary" @click="returnBook(row.item.book_id)">Return</b-button>
       </template>
     </b-table>
-    <h1 v-else>No loans</h1>
+    <h1 v-else>Nema knjiga za prikaz.</h1>
   </div>
 </template>
 

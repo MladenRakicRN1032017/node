@@ -29,7 +29,7 @@ export default {
   methods: {
     ...mapActions(['login']),
     log() {
-      this.$axios.post('/users/login', {
+      this.$axios.post('/members/login', {
         email: this.email,
         password: this.password,
       }).then(response => {
