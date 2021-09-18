@@ -12,14 +12,6 @@ const pool = mysql.createPool({
     database: 'library'
 });
 
-const schema = Joi.object({
-    title: Joi.string().max(100).required(),
-    author: Joi.string().max(100).required(),
-    isbn: Joi.string().max(100).required(),
-    publish_year: Joi.number().integer().min(1000).max(2021),
-    category: Joi.string().max(100)
-})
-
 router.use(express.json())
 
 router.get('/', (req, res) => {
@@ -61,20 +53,6 @@ router.get('/search/:title', (req, res) => {
     }); 
 })
 
-
-router.get('/tag/:tag', (req, res) => {
-    let query = 'SELECT book_id FROM book_tag WHERE tag = ?';
-    let formated = mysql.format(query, [req.params.tag]);
-
-    pool.query(formated, (err, rows) => {
-        if (err)
-            res.status(500).send(err.sqlMessage);
-        else
-            res.send(rows);
-    }); 
-})
-
-
 router.get('/:id', (req, res) => {
     let query = 'SELECT * FROM books WHERE id = ?';
     let formated = mysql.format(query, [req.params.id]);
@@ -86,10 +64,6 @@ router.get('/:id', (req, res) => {
             res.send(rows[0]);
     });
 })
-
-
-
-
 
 
 

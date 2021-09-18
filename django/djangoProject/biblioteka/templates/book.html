@@ -1,15 +1,23 @@
-<!DOCTYPE html>
-<html>
-<title>Library</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-<link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-teal.css">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-<body>
-
-<h1>Hej hej hej danas sam ok</h1>
+{% extends 'master.html' %}
 
 
-</body>
-</html> 
+{% block content %}
+
+        <div class="card">
+        <div class="card-header">
+            <h2>
+                {{ book.title }}
+            </h2>
+        </div>
+        <div class="card-body text-left">
+            <h4>Author</h4><span>{{ book.author }}</span>
+        </div>
+        <div class="card-body text-left">
+            <h4>Supplies</h4><span>{{ book.br_komada }}</span>
+        </div>
+        <div class="card-body text-left">
+            <a href="{% url 'edit_book' book.id %}"><button class="btn btn-primary">Dodaj na stanje</button></a>
+        </div>
+    </div>
+
+{% endblock content %}

@@ -1,6 +1,6 @@
 <template>
   <b-row class="mt-3 text-center">
-    <h1>Books Catalogue</h1>
+    <h1>Katalog knjiga</h1>
     <b-row class="pt-5 justify-content-center">
       <b-col cols="10">
         <BookList/>

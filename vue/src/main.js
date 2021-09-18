@@ -22,6 +22,11 @@ Vue.filter('capitalize', function (value) {
   return value.charAt(0).toUpperCase() + value.slice(1)
 })
 
+Vue.filter('date_format', function (value) {
+  value = value.substr(0, value.indexOf('T'))
+  return value
+})
+
 
 new Vue({
   router,

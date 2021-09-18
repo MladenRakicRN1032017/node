@@ -17,7 +17,7 @@ router.use(express.json())
 router.use('/', verifyToken)
 
 router.get('/', (req, res) => {
-    let query = 'SELECT book_id, start_date, return_date FROM history WHERE member_id = ?';
+    let query = 'SELECT book_id, books.title, start_date, return_date FROM history JOIN books ON history.book_id = books.id WHERE member_id = ?';
     let formated = mysql.format(query, [req.member.id]);
 
     pool.query(formated, (err, rows) => {

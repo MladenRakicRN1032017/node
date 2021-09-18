@@ -51,7 +51,11 @@
 
                 <div class="form-group">
                     <label for="{{ form.category.id_for_label }}">{{ form.category.label_tag }}</label>
-                    <input type="text" class="form-control" id="{{ form.category.id_for_label }}" name="{{ form.category.name }}">
+                    <select class="custom-select" name="{{ form.category.name }}" id="{{ form.category.id_for_label }}">
+                        {% for category in categories %}
+                            <option value="{{category}}">{{category}}</option>
+                        {% endfor %}
+                    </select>
                     {% if form.category.errors %}
                         <div class="alert alert-danger">
                             <ul style="text-align: left">

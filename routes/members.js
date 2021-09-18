@@ -3,6 +3,8 @@ const mysql = require('mysql');
 const Joi = require('joi')
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt');
+const dateConverter = require('../converters/dateToSql');
+const { response } = require('express');
 const router = express.Router()
 
 const pool = mysql.createPool({
@@ -17,6 +19,17 @@ const pool = mysql.createPool({
 
 const schemaLogin = Joi.object({
     email: Joi.string().min(10).max(100).required(),
+    password: Joi.string().min(8).required()
+})
+
+const schemaRegister = Joi.object({
+    name: Joi.string().max(100).required(),
+    email: Joi.string().min(10).max(100).required(),
+    password: Joi.string().min(8).required()
+})
+
+const schemaEdit = Joi.object({
+    name: Joi.string().max(100).required(),
     password: Joi.string().min(8).required()
 })
 
@@ -44,9 +57,9 @@ router.post('/login', async (req, res) => {
                     const match = await bcrypt.compare(req.body.password, member.password);
                     const accessToken = jwt.sign(JSON.stringify(member), process.env.TOKEN_SECRET)
                     if (match) {
-                        res.send({ jwt: accessToken, email: member.email, membership_until: member.membership_until });
+                        res.send({ jwt: accessToken, name: member.name, email: member.email, membership_until: member.membership_until });
                     } else {
-                        res.status(400).send({ message: "Invalid Credentials" });
+                        res.status(400).send('Invalid credentials!');
                     }   
                 }  
             }
@@ -55,8 +68,38 @@ router.post('/login', async (req, res) => {
     }
 })
 
+
+router.put('/edit/', async (req, res) => {
+    let { error } = schemaEdit.validate(req.body)
+
+    if (error) {
+        res.status(400).send(error.details[0].message)
+    } else {
+        let encryptedPassword = await bcrypt.hash(req.body.password, 10);
+        let query = 'UPDATE members SET name=?, password=? WHERE id = ?';
+        let formated = mysql.format(query, [req.body.name, encryptedPassword, req.member.id]);
+
+        pool.query(formated, (err, rows) => {
+            if (err) {
+                res.status(500).send(err.sqlMessage)
+            } else {
+                query = 'SELECT name, email, membership_until FROM members WHERE id = ?'
+                formated = mysql.format(query, [req.member.id])
+                
+                pool.query(formated, (error, result) => {
+                    if (error) {
+                        res.status(500).send(err.sqlMessage)
+                    } else {
+                        res.send(result[0])
+                    }
+                })
+            }
+        })
+    }
+})
+
 router.use('/register', (req, res, next) => {
-    let { error } = schemaLogin.validate(req.body)
+    let { error } = schemaRegister.validate(req.body)
 
     if (error) {
         res.status(400).send(error.details[0].message)
@@ -80,14 +123,15 @@ router.use('/register', (req, res, next) => {
 
 router.post('/register', async(req, res) => {
     encryptedPassword = await bcrypt.hash(req.body.password, 10);
-    let query = 'INSERT INTO members (email, password) values (?, ?)'
-    let formated = mysql.format(query, [req.body.email, encryptedPassword])
+    let query = 'INSERT INTO members (name, email, password, membership_until) values (?, ?, ?, ?)'
+    let formated = mysql.format(query, [req.body.name, req.body.email, encryptedPassword, dateConverter])
 
     pool.query(formated, (err, response) => {
         if (err) {
+            console.log(err.sqlMessage)
             res.status(500).send(err.sqlMessage)
         } else {
-            res.send('Registration request sent.')
+            res.sendStatus(200)
         }
     })
     

@@ -35,6 +35,10 @@ export default new Vuex.Store({
       state.loggedIn = true
     },
 
+    update_member: function (state, member) {
+      state.member = member
+    },
+
     log_out: function (state) {
       state.member = null
       state.loggedIn = false
@@ -44,36 +48,8 @@ export default new Vuex.Store({
       state.reservations.push(reservation)
     },
 
-    return_book: function (state, book) {
-      for (let m = 0; m < state.loans.length; m++) {
-        if (state.loans[m].book_id === book) {
-          state.loans.splice(m, 1);
-          break;
-        }
-      }
-    },
-
     add_book: function (state, message) {
       state.messages.push(message);
-    },
-
-    remove_message: function (state, id) {
-      for (let m = 0; m < state.messages.length; m++) {
-        if (state.messages[m].id === id) {
-          state.messages.splice(m, 1);
-          break;
-        }
-      }
-    },
-
-    update_message: function (state, payload) {
-      for (let m = 0; m < state.messages.length; m++) {
-        if (state.messages[m].id === parseInt(payload.id)) {
-          state.messages[m].user = payload.msg.user;
-          state.messages[m].message = payload.msg.message;
-          break;
-        }
-      }
     }
   },
 
@@ -167,8 +143,42 @@ export default new Vuex.Store({
       commit('set_member', member)
     },
 
-    reserve: function ({commit}, book) {
-      let body = {"book_id": book}
+    logout: function ({commit}) {
+      localStorage.removeItem('jwt')
+      console.log(localStorage.getItem('jwt'))
+      commit('log_out')
+    },
+
+    edit_member: function ({commit}, member) {
+      let body = member
+      const jwt = localStorage.getItem('jwt')
+      const bearer = `Bearer ${jwt}`
+      fetch('http://localhost:8000/members/edit', {
+        method: 'put',
+        headers: {
+          'Authorization': bearer,
+          'Content-type': 'application/json'
+        },
+        body: JSON.stringify(body)
+      }).then(response => {
+        if (!response.ok) {
+          throw response
+        }
+        return response.json()
+      }).then(data => {
+        commit('update_member', data)
+        alert('Profil je uspesno azuriran.')
+      }).catch(err => {
+        if (typeof err.text === 'function')
+          err.text().then((errorMessage) => {
+            alert(errorMessage);
+          });
+        else
+          alert(err);
+      })
+    },
+
+    reserve: function ({commit}, body) {
       const jwt = localStorage.getItem('jwt')
       const bearer = `Bearer ${jwt}`
       fetch('http://localhost:8000/reservations/reserve', {
@@ -195,36 +205,7 @@ export default new Vuex.Store({
           alert(err);
       })
 
-    },
-
-    return_book: function ({commit}, book) {
-      let body = {"book": book}
-      const jwt = localStorage.getItem('jwt')
-      const bearer = `Bearer ${jwt}`
-      fetch('http://localhost:8000/loans/delete', {
-        method: 'delete',
-        headers: {
-          'Authorization': bearer,
-          'Content-type': 'application/json'
-        },
-        body: JSON.stringify(body)
-      }).then(response => {
-        if (!response.ok) {
-          throw response
-        }
-        return response.json()
-      }).then(data => {
-        alert('Book returned!')
-        commit('return_book', data)
-      }).catch(err => {
-        if (typeof err.text === 'function')
-          err.text().then((errorMessage) => {
-            alert(errorMessage);
-          });
-        else
-          alert(err);
-      })
-    },
+    }
 
 
 

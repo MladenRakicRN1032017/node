@@ -16,6 +16,9 @@ export default {
   methods: {
     ...mapActions(['login'])
   },
+  mounted() {
+    localStorage.removeItem('jwt')
+  }
 }
 </script>
 

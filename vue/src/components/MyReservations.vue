@@ -1,11 +1,15 @@
 <template>
-  <div>
+  <div class="col-8">
     <b-table
+        caption-top
+        striped table-variant="primary"
         v-if="this.reservations.length"
         sticky-header="800px"
         :items="this.reservations"
         :fields="fields"
+        @row-clicked="openBook"
         head-variant="light">
+      <template #table-caption>Current reservations</template>
     </b-table>
     <h1 v-else>No loans</h1>
   </div>
@@ -21,13 +25,16 @@ export default {
   data() {
     return {
       fields: [
-        {key: 'title'},
-        {key: 'start_date'},
+        {key: 'title', isRowHeader: true},
+        {key: 'start_date', formatter: function (value) {  value = value.substr(0, value.indexOf('T')); return value}},
       ]
     }
   },
   methods: {
     ...mapActions(['load_reservations']),
+    openBook(item) {
+      this.$router.push({name: 'Book', params: {id: item.book_id}})
+    }
   },
   mounted() {
     this.load_reservations()
@@ -36,5 +43,7 @@ export default {
 </script>
 
 <style scoped>
-
+  :hover {
+    cursor: pointer;
+  }
 </style>

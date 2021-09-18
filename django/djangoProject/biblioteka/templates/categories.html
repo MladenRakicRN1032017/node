@@ -1,0 +1,31 @@
+{% extends 'master.html' %}
+
+
+{% block content %}
+
+    <h1>Books Catalogue</h1>
+    <div class="row mt-5" style="text-align: left">
+        <div class="col">
+            <a href="{% url 'add_category' %}"><button class="btn btn-primary">Dodaj</button></a>
+        </div>
+    </div>
+    <table class="table table-hover table-primary mt-2">
+    <thead>
+        <tr>
+        <th scope="col">Name</th>
+        <th scope="col">Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for category in categories %}
+        
+            <tr>
+                <th scope="row">{{category.name}}</th>
+                <td>{{category.description}}</td>
+            </tr>
+        
+        {% endfor %}
+    </tbody>
+    </table>
+
+{% endblock content %}

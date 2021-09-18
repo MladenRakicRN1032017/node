@@ -1,0 +1,47 @@
+{% extends 'master.html' %}
+
+
+{% block content %}
+
+    <h1>Reservations</h1>
+    {% if reservations %}
+        <table class="table table-hover table-primary mt-5">
+        <thead>
+            <tr>
+            <th scope="col">Book</th>
+            <th scope="col">Member</th>
+            <th scope="col">Date reserved</th>
+            <th scope="col">Loan</th>
+            <th scope="col">Cancel</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for reservation in reservations %}
+            
+                <tr>
+                    <th scope="row">{{reservation.book.title}}</th>
+                    <td>{{reservation.member.email}}</td>
+                    <td>{{reservation.start_date}}</td>
+                    <td>
+                        <form action="{% url 'make_loan' reservation.id %}" method="post">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-primary">Make loan</button>
+                        </form>
+                    </td>
+                    <td>
+                        <form action="{% url 'cancel_reservation' reservation.id %}" method="post">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger">Cancel</button>
+                        </form>
+                    </td>
+                </tr>
+            
+            {% endfor %}
+        </tbody>
+        </table>
+    {% else %}
+        <br>
+        <h3>Trenutno nema rezervacija.</h3>
+    {% endif %}
+
+{% endblock content %}

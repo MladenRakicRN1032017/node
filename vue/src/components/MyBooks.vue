@@ -1,14 +1,15 @@
 <template>
-  <div>
+  <div class="col-8">
     <b-table
+        caption-top hover
+        striped table-variant="primary"
         v-if="this.loans.length"
         sticky-header="800px"
         :items="this.loans"
         :fields="fields"
+        @row-clicked="openBook"
         head-variant="light">
-      <template v-slot:cell(return)="row">
-        <b-button variant="primary" @click="returnBook(row.item.book_id)">Return</b-button>
-      </template>
+      <template #table-caption>Current loans</template>
     </b-table>
     <h1 v-else>Nema knjiga za prikaz.</h1>
   </div>
@@ -23,20 +24,19 @@ export default {
   },
   data() {
     return {
+      selected: null,
       fields: [
-        {key: 'title'},
-        {key: 'loan_date'},
-        {key: 'due_date'},
-        {key: 'return'}
+        {key: 'title', isRowHeader: true},
+        {key: 'start_date', formatter: function (value) {  value = value.substr(0, value.indexOf('T')); return value}},
+        {key: 'due_date', formatter: function (value) {  value = value.substr(0, value.indexOf('T')); return value}},
       ]
     }
   },
   methods: {
-    ...mapActions(['load_loans', 'return_book']),
-    returnBook(id) {
-      console.log(id)
-      this.return_book(id)
-    }
+    ...mapActions(['load_loans']),
+    openBook(item) {
+      this.$router.push({name: 'Book', params: {id: item.book_id}})
+    },
   },
   mounted() {
     this.load_loans()
@@ -45,5 +45,7 @@ export default {
 </script>
 
 <style scoped>
-
+  :hover{
+    cursor: pointer;
+  }
 </style>

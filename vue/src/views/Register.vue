@@ -1,7 +1,11 @@
 <template>
   <b-row class="pt-5 justify-content-center">
     <b-col cols="6">
-      <form @submit.prevent="log">
+      <form @submit.prevent="register">
+        <div class="form-group">
+          <label for="name">Name</label>
+          <input v-model="name" type="text" class="form-control" id="name" aria-describedby="name" placeholder="Enter name">
+        </div>
         <div class="form-group">
           <label for="email">Email</label>
           <input v-model="email" type="text" class="form-control" id="email" aria-describedby="email" placeholder="Enter email">
@@ -17,25 +21,25 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex'
+
 export default {
-  name: "Login",
+  name: "Register",
   data () {
     return {
+      name: '',
       email: '',
       password: ''
     }
   },
   methods: {
-    ...mapActions(['login']),
-    log() {
-      this.$axios.post('/members/login', {
+    register() {
+      this.$axios.post('/members/register', {
+        name: this.name,
         email: this.email,
         password: this.password,
-      }).then(response => {
-        this.login(response.data)
-        localStorage.setItem('jwt', response.data.jwt)
-        this.$router.push({name: 'Home'});
+      }).then(() => {
+        alert('Uspesno ste se registrovali.')
+        this.$router.push({name: 'Home'})
       }).catch(err => {
         alert(err.response.data)
       })

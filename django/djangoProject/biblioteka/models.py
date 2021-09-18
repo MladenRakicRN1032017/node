@@ -5,7 +5,7 @@ class Books(models.Model):
     author = models.CharField(max_length=100)
     publish_year = models.SmallIntegerField()  # This field type is a guess.
     category = models.CharField(max_length=100)
-    br_komada = models.IntegerField(blank=True, null=True)
+    br_komada = models.IntegerField(default=0)
 
     def __str__(self):
         return self.title
@@ -49,6 +49,7 @@ class Loans(models.Model):
 
 
 class Members(models.Model):
+    name = models.CharField(max_length=100)
     email = models.CharField(unique=True, max_length=200)
     password = models.CharField(max_length=200)
     active = models.IntegerField()
@@ -61,7 +62,7 @@ class Members(models.Model):
 class Reservations(models.Model):
     member = models.ForeignKey(Members, models.CASCADE)
     book = models.ForeignKey(Books, models.CASCADE)
-    start_date = models.DateField()
+    start_date = models.DateField()        
 
     class Meta:
         db_table = 'reservations'

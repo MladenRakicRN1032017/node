@@ -23,8 +23,10 @@
               <b-button variant="primary" class="ms-2" @click="search">Search</b-button>
             </li>
           </ul>
+          <b-button v-if="!this.loggedIn" class="me-3" variant="outline-primary" @click="redirectToRegister()">Register</b-button>
           <b-button v-if="!this.loggedIn" variant="outline-success" @click="redirectToLogin()">Log in</b-button>
-          <b-button v-if="this.loggedIn" variant="outline-success" @click="redirectToProfile()">{{member.email}}</b-button>
+          <b-button v-if="this.loggedIn" variant="outline-success" @click="redirectToProfile()">{{member.name}}</b-button>
+          <b-button v-if="this.loggedIn" class="ms-3" variant="outline-danger" @click="log_out()">Log out</b-button>
         </div>
       </div>
     </nav>
@@ -45,12 +47,19 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['search', 'login']),
+    ...mapActions(['search', 'login', 'logout']),
+    log_out() {
+      this.logout()
+      this.$router.push({name: 'Home'})
+    },
     redirectToLogin() {
       this.$router.push({name: 'Login'})
     },
     redirectToProfile() {
       this.$router.push({name: 'Profile'})
+    },
+    redirectToRegister() {
+      this.$router.push({name: 'Register'})
     },
     search() {
       if (this.searchText === '') {

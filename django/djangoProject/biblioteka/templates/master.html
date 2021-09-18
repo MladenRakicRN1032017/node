@@ -8,6 +8,7 @@
     {% include 'navbar.html' %} {#Navbar#}
 
     <div class="container" style="text-align: center; margin-top: 50px"> {#Page content#}
+        {% include 'messages.html'%}
         {% block content %}
             <p>Placeholder za content.</p>
         {% endblock content %}

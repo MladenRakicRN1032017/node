@@ -51,8 +51,8 @@ router.use('/reserve', (req, res, next) => {
 
 // Check if reservation possible
 router.use('/reserve', (req, res, next) => {
-    let query = 'SELECT COUNT(*) as broj FROM reservations WHERE book_id = ?'
-    let formated = mysql.format(query, [req.body.book_id])
+    let query = 'SELECT COUNT(*) as broj FROM reservations WHERE book_id = ? AND start_date = ?'
+    let formated = mysql.format(query, [req.body.book_id, req.body.start_date])
     
     pool.query(formated, (err, rows) => {
         if (err)
@@ -68,7 +68,7 @@ router.use('/reserve', (req, res, next) => {
                     if (rows2[0].br_komada - rows[0].broj >= 0) {
                         next()
                     } else {
-                        res.status(404).send('All books already reserved!')
+                        res.status(404).send('Sve knjige su zauzete za taj datum!')
                     }
                 }
             }); 
@@ -80,7 +80,7 @@ router.use('/reserve', (req, res, next) => {
 // Reserve a book
 router.post('/reserve', (req, res) => {
     let query = 'INSERT INTO reservations (member_id, book_id, start_date) values (?, ?, ?)'
-    let formated = mysql.format(query, [req.member.id, req.body.book_id, dateConverter])
+    let formated = mysql.format(query, [req.member.id, req.body.book_id, req.body.start_date])
 
     pool.query(formated, (error, response) => {
         if (error)

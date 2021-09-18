@@ -2,6 +2,8 @@ const express = require('express')
 const app = express()
 const port = 8000
 const cors = require('cors')
+const historyApi = require('connect-history-api-fallback');
+const path = require('path')
 require("dotenv").config();
 // routes
 const books = require('./routes/books')
@@ -29,10 +31,11 @@ app.use('/loans', loans)
 app.use('/history', history)
 
 
+const staticMiddleware = express.static(path.join(__dirname, 'dist'));
 
-app.get('/', (req, res) => {
-    res.send('Homepage')
-})
+app.use(staticMiddleware);
+app.use(historyApi());
+app.use(staticMiddleware);
 
 
 app.listen(port, () => {
